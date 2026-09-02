@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import zipfile
 import subprocess
 from datetime import datetime
+
+# Garante suporte a UTF-8 no console do Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 def verificar_git_repo():
     """Verifica se estamos em um repositório Git"""
@@ -37,9 +46,11 @@ def criar_release_assets():
         print("❌ Executável não encontrado. Execute 'python build.py' primeiro")
         return None
     
-    # Nome dos arquivos de release
-    exe_name = f"LimparMetadadosPRO_{versao}_{data_atual}.exe"
-    zip_name = f"LimparMetadadosPRO_{versao}_{data_atual}.zip"
+    os.makedirs('versoes', exist_ok=True)
+    
+    # Nome dos arquivos de release na pasta versoes/
+    exe_name = os.path.join('versoes', f"LimparMetadadosPRO_{versao}_{data_atual}.exe")
+    zip_name = os.path.join('versoes', f"LimparMetadadosPRO_{versao}_{data_atual}.zip")
     
     # Copia o executável com nome versionado
     import shutil

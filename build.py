@@ -7,6 +7,14 @@ import shutil
 import zipfile
 from datetime import datetime
 
+# Garante suporte a UTF-8 no console do Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 def verificar_dependencias():
     """Verifica e instala dependências necessárias"""
     print("Verificando dependencias...")
@@ -128,10 +136,17 @@ Aplicação desktop profissional para remoção completa e segura de metadados d
     print("✅ README de distribuição criado")
 
 def criar_pacote_zip(executavel_path):
-    """Cria arquivo ZIP para distribuição"""
+    """Cria arquivo ZIP e copia executável diretamente para a pasta versoes/"""
+    os.makedirs('versoes', exist_ok=True)
     data_atual = datetime.now().strftime("%Y%m%d")
-    nome_zip = f"LimparMetadadosPRO_v1.0.4_{data_atual}.zip"
     
+    # Copia o executável com nome versionado para a pasta versoes/
+    exe_versao = os.path.join('versoes', f"LimparMetadadosPRO_v1.0.4_{data_atual}.exe")
+    shutil.copy2(executavel_path, exe_versao)
+    print(f"✅ Executável versionado salvo em: {exe_versao}")
+    
+    # Pacote ZIP dentro da pasta versoes/
+    nome_zip = os.path.join('versoes', f"LimparMetadadosPRO_v1.0.4_{data_atual}.zip")
     print(f"📦 Criando pacote: {nome_zip}")
     
     with zipfile.ZipFile(nome_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
@@ -144,7 +159,7 @@ def criar_pacote_zip(executavel_path):
     
     tamanho_zip = os.path.getsize(nome_zip) / (1024 * 1024)
     print(f"✅ Pacote criado: {nome_zip} ({tamanho_zip:.1f} MB)")
-    return nome_zip
+    return exe_versao, nome_zip
 
 def main():
     """Função principal de build"""
@@ -175,19 +190,20 @@ def main():
         print("=" * 50)
         return False
     
-    # Cria arquivos de distribuição
+    # Cria arquivos de distribuição na pasta versoes/
     criar_readme_distribuicao()
-    nome_zip = criar_pacote_zip(executavel_path)
+    exe_versao, nome_zip = criar_pacote_zip(executavel_path)
     
     print("\n" + "=" * 50)
     print("🎉 BUILD CONCLUÍDO COM SUCESSO!")
     print("=" * 50)
-    print(f"📁 Executável: {executavel_path}")
-    print(f"📦 Pacote ZIP: {nome_zip}")
-    print("\n💡 Dicas:")
-    print("   • Teste o executável antes de distribuir")
-    print("   • O ZIP está pronto para distribuição")
-    print("   • Alguns antivírus podem dar falso positivo")
+    print(f"📁 Executável para Release: {exe_versao}")
+    print(f"📦 Pacote ZIP para Release: {nome_zip}")
+    print("\n💡 Como publicar no GitHub:")
+    print("   1. Acesse: https://github.com/jbpssdev/limpar-metadados-pro/releases/new")
+    print("   2. Crie a tag da versão (ex: v1.0.4)")
+    print("   3. Arraste os arquivos da pasta 'versoes/' para o GitHub Release")
+    print("   4. Clique em 'Publish release'")
     print("=" * 50)
     
     return True
