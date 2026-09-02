@@ -17,7 +17,7 @@ def verificar_dependencias():
     except ImportError:
         print("PyInstaller nao encontrado. Instalando...")
         try:
-            subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller==6.11.0"], check=True)
+            subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
             print("PyInstaller instalado com sucesso")
         except subprocess.CalledProcessError:
             print("Falha ao instalar PyInstaller")
@@ -61,7 +61,7 @@ def compilar_executavel():
         "PyInstaller",
         "--clean",
         "--noconfirm",
-        "LimpaMetadados.spec"
+        "LimparMetadadosPRO.spec"
     ]
     
     try:
@@ -87,7 +87,7 @@ def compilar_executavel():
 
 def verificar_executavel():
     """Verifica se o executável foi criado corretamente"""
-    executavel = os.path.join("dist", "LimpaMetadados.exe")
+    executavel = os.path.join("dist", "LimparMetadadosPRO.exe")
     
     if os.path.exists(executavel):
         tamanho = os.path.getsize(executavel) / (1024 * 1024)
@@ -99,40 +99,27 @@ def verificar_executavel():
 
 def criar_readme_distribuicao():
     """Cria README para distribuição"""
-    readme_content = """# LimpaMetadados v1.0.3
+    readme_content = """# Limpar Metadados PRO v1.0.4
+Desenvolvido por Jackson Porciuncula
 
 ## 📋 Sobre
-Ferramenta para remoção completa de metadados de arquivos de vídeo com melhorias críticas de segurança.
+Aplicação desktop profissional para remoção completa e segura de metadados de arquivos de vídeo, garantindo privacidade total ao compartilhar mídias digitais.
 
 ## 🚀 Como Usar
-1. Execute LimpaMetadados.exe
-2. Adicione seus arquivos de vídeo
-3. Clique em "Processar"
-4. Aguarde a conclusão
+1. Execute LimparMetadadosPRO.exe
+2. Arraste seus arquivos de vídeo para a janela (ou clique em "Adicionar Vídeos")
+3. Opcionalmente selecione uma pasta de destino
+4. Clique em "INICIAR LIMPEZA"
+5. Aguarde a conclusão e acerte seus arquivos protegidos!
 
 ## 📁 Formatos Suportados
-- MP4, AVI, MKV, MOV
-- WMV, FLV, WebM, M4V
+- MP4, AVI, MKV, MOV, WMV, FLV, WebM
 
-## 🛡️ Segurança
+## 🛡️ Segurança e Privacidade
 - Funciona 100% offline
-- Não envia dados para internet
-- Mantém qualidade original dos vídeos
-- Remove completamente todos os metadados
-
-## ⚠️ Importante
-- Faça backup dos arquivos originais
-- Alguns antivírus podem dar falso positivo
-- O programa é completamente seguro
-
-## 🆘 Suporte
-Se o Windows Defender bloquear o programa:
-1. É um falso positivo comum
-2. Adicione exceção no antivírus
-3. O programa não acessa a internet
-
-## 📄 Licença
-Software gratuito para uso pessoal e comercial.
+- Não realiza conexões com a internet
+- Preserva a qualidade original (bitexact / sem recodificação de streams)
+- Elimina coordenadas GPS, modelo da câmera, timestamps e dados de autor
 """
     
     with open('README_DISTRIBUICAO.txt', 'w', encoding='utf-8') as f:
@@ -143,13 +130,13 @@ Software gratuito para uso pessoal e comercial.
 def criar_pacote_zip(executavel_path):
     """Cria arquivo ZIP para distribuição"""
     data_atual = datetime.now().strftime("%Y%m%d")
-    nome_zip = f"LimpaMetadados_v1.0.3_{data_atual}.zip"
+    nome_zip = f"LimparMetadadosPRO_v1.0.4_{data_atual}.zip"
     
     print(f"📦 Criando pacote: {nome_zip}")
     
     with zipfile.ZipFile(nome_zip, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
         # Adiciona o executável
-        zipf.write(executavel_path, "LimpaMetadados.exe")
+        zipf.write(executavel_path, "LimparMetadadosPRO.exe")
         
         # Adiciona README
         if os.path.exists('README_DISTRIBUICAO.txt'):
@@ -162,7 +149,7 @@ def criar_pacote_zip(executavel_path):
 def main():
     """Função principal de build"""
     print("=" * 50)
-    print("BUILD LIMPA METADADOS v1.0.3 - VERSAO COM CORRECAO CRITICA DE CAMINHOS")
+    print("BUILD LIMPAR METADADOS PRO v1.0.4")
     print("=" * 50)
     print()
     

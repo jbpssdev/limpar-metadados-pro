@@ -1,12 +1,16 @@
 import subprocess
 import os
 import sys
+import shutil
 import mimetypes
 import hashlib
 import logging
 import time
 import re
 from pathlib import Path
+
+# Inicializa mimetypes para garantir reconhecimento de extensões no Windows
+mimetypes.init()
 
 # Configuração de logging de segurança
 logging.basicConfig(
@@ -19,10 +23,11 @@ logging.basicConfig(
 )
 security_logger = logging.getLogger('security')
 
-# Informações do programa para evitar detecção de antivírus
-__version__ = "1.0.3"
-__author__ = "LimpaMetadados"
-__description__ = "Ferramenta para remoção de metadados de vídeos"
+# Informações do programa
+__title__ = "Limpar Metadados PRO"
+__version__ = "1.0.4"
+__author__ = "Jackson Porciuncula"
+__description__ = "Ferramenta profissional para remoção segura de metadados de vídeos"
 
 # Configurações de segurança
 MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024  # 10GB
@@ -72,13 +77,24 @@ def validate_file_security(filepath):
     if not os.path.exists(normalized_path):
         raise FileNotFoundError(f"Arquivo não encontrado: {normalized_path}")
     
-    # Verifica se não há tentativas de path traversal
-    if '..' in normalized_path:
+    # Verifica se não há tentativas de path traversal (apenas se '..' for um diretório inteiro)
+    path_parts = normalized_path.replace('\\', '/').split('/')
+    if '..' in path_parts:
         security_logger.error(f"Tentativa de path traversal detectada: {normalized_path}")
-        raise ValueError("Caminho de arquivo contém sequência suspeita")
+        raise ValueError("Caminho de arquivo contém sequência suspeita de navegação (..)")
     
+    # Verifica se o arquivo está acessível (não bloqueado)
+    try:
+        with open(normalized_path, 'rb') as f:
+            pass
+    except IOError:
+        security_logger.error(f"Arquivo inacessível ou bloqueado: {normalized_path}")
+        raise ValueError("O arquivo está sendo usado por outro programa ou é inacessível.")
+
     # Verifica tamanho do arquivo
     file_size = os.path.getsize(normalized_path)
+    if file_size == 0:
+        raise ValueError("O arquivo está vazio (0 bytes).")
     if file_size > MAX_FILE_SIZE:
         raise ValueError(f"Arquivo muito grande: {file_size} bytes (máximo: {MAX_FILE_SIZE})")
     
@@ -93,11 +109,15 @@ def validate_file_security(filepath):
             # Assinaturas de vídeo conhecidas
             video_signatures = [
                 b'\x00\x00\x00\x14ftypmp4',  # MP4
-                b'\x00\x00\x00\x20ftypmp4',  # MP4
-                b'RIFF',  # AVI
-                b'\x1a\x45\xdf\xa3',  # MKV
-                b'\x00\x00\x00\x14ftyp',  # MOV
-                b'\x30\x26\xb2\x75',  # WMV
+                b'\x00\x00\x00\x18ftypmp4',  # MP4 v1
+                b'\x00\x00\x00\x20ftypmp4',  # MP4 v2
+                b'\x00\x00\x00\x18ftypisom', # MP4 ISO
+                b'RIFF',  # AVI / WAV
+                b'\x1a\x45\xdf\xa3',  # MKV / WebM
+                b'\x00\x00\x00\x14ftypqt',   # MOV
+                b'\x00\x00\x00\x14ftyp',     # Generic ftyp
+                b'\x30\x26\xb2\x75',          # WMV / ASF
+                b'FLV\x01',                  # FLV
             ]
             
             is_video = any(header.startswith(sig) for sig in video_signatures)
@@ -123,17 +143,29 @@ def calculate_file_hash(filepath):
     return sha256_hash.hexdigest()
 
 def get_ffmpeg_path():
-    """Obtém o caminho do FFmpeg de forma segura"""
+    """Obtém o caminho do FFmpeg de forma segura (local, empacotado ou PATH do sistema)"""
     if getattr(sys, 'frozen', False):
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
-        return os.path.join(base_path, 'ffmpeg.exe')
-    else:
-        return os.path.join(os.path.dirname(__file__), 'ffmpeg.exe')
+        exe_path = os.path.join(base_path, 'ffmpeg.exe')
+        if os.path.exists(exe_path):
+            return exe_path
+            
+    # 1. Verifica pasta local da aplicação
+    local_path = os.path.join(os.path.dirname(__file__), 'ffmpeg.exe')
+    if os.path.exists(local_path):
+        return local_path
+        
+    # 2. Verifica se o FFmpeg está instalado no PATH do sistema operacional
+    system_ffmpeg = shutil.which('ffmpeg') or shutil.which('ffmpeg.exe')
+    if system_ffmpeg:
+        return system_ffmpeg
+        
+    return local_path
 
 def verificar_ffmpeg():
     """Verifica se o FFmpeg está disponível e funcionando"""
     ffmpeg_path = get_ffmpeg_path()
-    if not os.path.exists(ffmpeg_path):
+    if not os.path.exists(ffmpeg_path) and not shutil.which(ffmpeg_path):
         return False, f"FFmpeg não encontrado em: {ffmpeg_path}"
     
     try:
@@ -176,7 +208,7 @@ def obter_metadados(arquivo):
             cmd, 
             capture_output=True, 
             text=True, 
-            timeout=FFMPEG_TIMEOUT,
+            timeout=FFMPEG_TIMEOUT, 
             encoding='utf-8', 
             errors='ignore',
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
@@ -191,7 +223,7 @@ def obter_metadados(arquivo):
         return f"Erro ao obter metadados: {str(e)}"
 
 def limpar_metadados(arquivo_entrada, arquivo_saida=None, callback=None):
-    """Remove metadados de um arquivo de vídeo mantendo a qualidade original"""
+    """Remove metadados de um arquivo de vídeo mantendo a qualidade e extensão original"""
     try:
         # Validações de segurança
         validate_file_security(arquivo_entrada)
@@ -202,11 +234,11 @@ def limpar_metadados(arquivo_entrada, arquivo_saida=None, callback=None):
         if not os.path.exists(arquivo_entrada):
             return False, f"Arquivo não encontrado: {arquivo_entrada}"
         
-        # Gera nome do arquivo de saída se não fornecido
+        # Gera nome do arquivo de saída preservando o formato/extensão original se não fornecido
         if not arquivo_saida:
             pasta = os.path.dirname(arquivo_entrada)
-            nome = os.path.splitext(os.path.basename(arquivo_entrada))[0]
-            arquivo_saida = os.path.join(pasta, f"{nome}_limpo.mp4")
+            nome, ext = os.path.splitext(os.path.basename(arquivo_entrada))
+            arquivo_saida = os.path.join(pasta, f"{nome}_limpo{ext}")
         
         # Valida também o arquivo de saída
         sanitize_filename(arquivo_saida)  # Para log de segurança
@@ -308,11 +340,15 @@ def processar_lote(lista_arquivos, pasta_saida=None, callback=None):
 def validar_arquivo_video(arquivo):
     """Valida se o arquivo é um formato de vídeo suportado com verificação de segurança"""
     try:
+        if not arquivo or not os.path.exists(arquivo):
+            return False, "Caminho de arquivo inválido ou inexistente."
+            
         validate_file_security(arquivo)
-        return True
+        return True, "Validado com sucesso."
     except Exception as e:
-        security_logger.warning(f"Arquivo rejeitado na validação: {os.path.basename(arquivo)} - {str(e)}")
-        return False
+        msg = str(e)
+        security_logger.warning(f"Arquivo rejeitado na validação: {os.path.basename(arquivo)} - {msg}")
+        return False, msg
 
 def obter_info_sistema():
     """Obtém informações básicas do sistema para diagnóstico"""

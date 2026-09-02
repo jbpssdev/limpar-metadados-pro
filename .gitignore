@@ -23,7 +23,6 @@ MANIFEST
 
 # PyInstaller
 *.manifest
-*.spec
 
 # Environments
 .env
@@ -50,24 +49,18 @@ Thumbs.db
 *.zip
 *.tar.gz
 
-# FFmpeg - too large for git
+# FFmpeg - binary too large for git (kept locally, downloaded in CI or releases)
 ffmpeg.exe
-
-# PyInstaller spec files (contain local paths)
-*.spec
 
 # Distribution files
 README_DISTRIBUICAO.txt
 
-# Version info (contains build details)
+# Version info
 version_info.txt
 
 # Application logs
 *.log
 limpa_metadados_security.log
-
-# Test files
-test_*.py
 
 # Temporary files
 *.tmp

@@ -15,16 +15,15 @@ def verificar_git_repo():
         return False
 
 def obter_versao_atual():
-    """Obtém a versão atual do projeto"""
+    """Obtém a versão atual do projeto do core.py"""
     try:
-        with open('LimpaMetadados.spec', 'r', encoding='utf-8') as f:
-            content = f.read()
-            # Procura pela versão no arquivo spec
-            if '1, 0, 3, 0' in content:
-                return "v1.0.3"
-        return "v1.0.3"  # versão padrão
+        with open('core.py', 'r', encoding='utf-8') as f:
+            for line in f:
+                if '__version__' in line:
+                    return "v" + line.split('"')[1]
     except:
-        return "v1.0.3"
+        pass
+    return "v1.0.4"
 
 def criar_release_assets():
     """Cria os arquivos necessários para o release"""
@@ -34,23 +33,23 @@ def criar_release_assets():
     data_atual = datetime.now().strftime("%Y%m%d")
     
     # Verifica se o executável existe
-    if not os.path.exists('dist/LimpaMetadados.exe'):
-        print("❌ Executável não encontrado. Execute 'py build.py' primeiro")
+    if not os.path.exists('dist/LimparMetadadosPRO.exe'):
+        print("❌ Executável não encontrado. Execute 'python build.py' primeiro")
         return None
     
     # Nome dos arquivos de release
-    exe_name = f"LimpaMetadados_{versao}_{data_atual}.exe"
-    zip_name = f"LimpaMetadados_{versao}_{data_atual}.zip"
+    exe_name = f"LimparMetadadosPRO_{versao}_{data_atual}.exe"
+    zip_name = f"LimparMetadadosPRO_{versao}_{data_atual}.zip"
     
     # Copia o executável com nome versionado
     import shutil
-    shutil.copy2('dist/LimpaMetadados.exe', exe_name)
+    shutil.copy2('dist/LimparMetadadosPRO.exe', exe_name)
     print(f"✅ Executável criado: {exe_name}")
     
     # Cria ZIP se não existir ou se estiver desatualizado
-    if not os.path.exists(zip_name) or os.path.getmtime('dist/LimpaMetadados.exe') > os.path.getmtime(zip_name):
+    if not os.path.exists(zip_name) or os.path.getmtime('dist/LimparMetadadosPRO.exe') > os.path.getmtime(zip_name):
         with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
-            zipf.write('dist/LimpaMetadados.exe', 'LimpaMetadados.exe')
+            zipf.write('dist/LimparMetadadosPRO.exe', 'LimparMetadadosPRO.exe')
             
             # Adiciona README se existir
             if os.path.exists('README_DISTRIBUICAO.txt'):

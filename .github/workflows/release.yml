@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller==6.11.0
+        pip install pyinstaller
         pip install -r requirements.txt
     
     - name: Build executable
@@ -35,24 +35,24 @@ jobs:
         $date = Get-Date -Format "yyyyMMdd"
         echo "VERSION=$version" >> $env:GITHUB_OUTPUT
         echo "DATE=$date" >> $env:GITHUB_OUTPUT
-        echo "EXE_NAME=LimpaMetadados_${version}_${date}.exe" >> $env:GITHUB_OUTPUT
-        echo "ZIP_NAME=LimpaMetadados_${version}_${date}.zip" >> $env:GITHUB_OUTPUT
+        echo "EXE_NAME=LimparMetadadosPRO_${version}_${date}.exe" >> $env:GITHUB_OUTPUT
+        echo "ZIP_NAME=LimparMetadadosPRO_${version}_${date}.zip" >> $env:GITHUB_OUTPUT
     
     - name: Prepare release assets
       run: |
         $version = "${{ steps.get_version.outputs.VERSION }}"
         $date = "${{ steps.get_version.outputs.DATE }}"
         
-        # Renomeia o executável
-        Copy-Item "dist\LimpaMetadados.exe" "LimpaMetadados_${version}_${date}.exe"
+        # Copia o executável compilado
+        Copy-Item "dist\LimparMetadadosPRO.exe" "LimparMetadadosPRO_${version}_${date}.exe"
         
         # Cria ZIP com executável e documentação
-        Compress-Archive -Path "dist\LimpaMetadados.exe", "README_DISTRIBUICAO.txt" -DestinationPath "LimpaMetadados_${version}_${date}.zip"
+        Compress-Archive -Path "dist\LimparMetadadosPRO.exe", "README_DISTRIBUICAO.txt" -DestinationPath "LimparMetadadosPRO_${version}_${date}.zip"
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        name: LimpaMetadados ${{ steps.get_version.outputs.VERSION }}
+        name: Limpar Metadados PRO ${{ steps.get_version.outputs.VERSION }}
         body: |
           # LimpaMetadados ${{ steps.get_version.outputs.VERSION }}
           
@@ -82,8 +82,8 @@ jobs:
           - Windows 7/8/10/11
           - Não requer instalação do Python
         files: |
-          LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.exe
-          LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.zip
+          LimparMetadadosPRO_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.exe
+          LimparMetadadosPRO_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.zip
         draft: false
         prerelease: false
       env:

@@ -1,160 +1,156 @@
-# LimpaMetadados
+# Limpar Metadados PRO
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/jbrunops/limpa-metadados)
-![GitHub downloads](https://img.shields.io/github/downloads/jbrunops/limpa-metadados/total)
+[![Python Version](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.14-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![UI Framework](https://img.shields.io/badge/UI-CustomTkinter%20%2B%20TkinterDnD2-indigo)](https://github.com/TomSchimansky/CustomTkinter)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey?logo=windows&logoColor=blue)](https://github.com/jbpssdev/limpar-metadados-pro)
 
-**Ferramenta para remoção segura de metadados de arquivos de vídeo**
-
-O LimpaMetadados é uma aplicação desktop desenvolvida para remover completamente informações pessoais, dados de localização e metadados sensíveis de arquivos de vídeo, garantindo maior privacidade ao compartilhar conteúdo digital.
-
-## Download
-
-### Versão v1.0.3 - Última versão estável
-
-**Download direto:**
-- [LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.exe) - Executável para Windows
-- [Pacote completo](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.zip) - Inclui documentação
-
-**Outras opções:**
-- [Todas as versões](https://github.com/jbrunops/limpa-metadados/releases)
-- [Código fonte](https://github.com/jbrunops/limpa-metadados/archive/refs/heads/main.zip)
-
-## Instalação e Uso
-
-### Requisitos do Sistema
-- Windows 7, 8, 10 ou 11
-- Nenhuma instalação adicional necessária
-- Funciona completamente offline
-
-### Instalação
-1. Baixe o arquivo `LimpaMetadados.exe`
-2. Salve em qualquer pasta de sua preferência
-3. Execute o arquivo diretamente (duplo clique)
-
-Não é necessária instalação tradicional. O programa é portátil e autocontido.
-
-### Como Usar
-1. Abra o programa LimpaMetadados.exe
-2. Clique em "Adicionar Arquivos" para selecionar os vídeos
-3. Configure a pasta de destino (opcional)
-4. Clique em "Processar Arquivos"
-5. Aguarde a conclusão do processamento
-
-## Funcionalidades
-
-### Recursos Principais
-- **Remoção completa de metadados**: Elimina todas as informações incorporadas
-- **Processamento em lote**: Processa múltiplos arquivos simultaneamente
-- **Preservação da qualidade**: Mantém a qualidade original dos vídeos
-- **Interface intuitiva**: Design simples e funcional
-- **Operação offline**: Não requer conexão com a internet
-- **Log detalhado**: Registro completo das operações realizadas
-
-### Formatos Suportados
-- MP4 (.mp4)
-- AVI (.avi)
-- MKV (.mkv)
-- MOV (.mov)
-- WMV (.wmv)
-- FLV (.flv)
-- WebM (.webm)
-
-## Segurança e Privacidade
-
-### Tipos de Metadados Removidos
-- **Localização GPS**: Coordenadas geográficas de gravação
-- **Informações do dispositivo**: Modelo de câmera, smartphone ou equipamento
-- **Dados do usuário**: Nome de usuário e configurações do sistema
-- **Timestamps**: Datas e horários específicos de criação/modificação
-- **Software utilizado**: Informações sobre programas de edição
-- **Configurações de câmera**: ISO, abertura, velocidade do obturador
-- **Outros metadados técnicos**: Codecs, bitrate, resolução original
-
-### Melhorias de Segurança (v1.0.2+)
-- Sanitização automática de nomes de arquivos
-- Validação MIME por assinatura binária
-- Sistema de auditoria com hash SHA-256
-- Controle de recursos com timeouts configuráveis
-- Limite de tamanho por arquivo (10GB)
-- Proteção contra injeção de comandos
-
-### Arquivos de Log
-O programa gera logs de segurança em `limpa_metadados_security.log` contendo:
-- Hash SHA-256 de todos os arquivos processados
-- Registro temporal de operações
-- Detecção de tentativas de acesso suspeitas
-
-## Resolução de Problemas
-
-### Falsos Positivos em Antivírus
-Alguns antivírus podem detectar erroneamente o programa como ameaça. Isso é comum em executáveis Python compilados. O programa:
-- É completamente seguro e open source
-- Não acessa a internet
-- Não modifica arquivos de sistema
-- Todo código é verificável neste repositório
-
-### Problemas de Performance
-- **Arquivos grandes**: O processamento pode demorar dependendo do tamanho
-- **Múltiplos arquivos**: Processe em lotes menores se necessário
-- **Recursos limitados**: Aguarde a conclusão antes de processar novos arquivos
-
-### Arquivos Corrompidos
-Se um arquivo não for processado:
-- Verifique se o arquivo não está corrompido
-- Confirme se o formato é suportado
-- Tente processar individualmente
-
-## Desenvolvimento
-
-### Tecnologias Utilizadas
-- **Python 3.11+**: Linguagem principal
-- **Tkinter**: Interface gráfica
-- **FFmpeg**: Engine de processamento de vídeo
-- **PyInstaller**: Compilação para executável
-
-### Estrutura do Projeto
-- `main.py`: Ponto de entrada da aplicação
-- `interface.py`: Interface gráfica do usuário
-- `core.py`: Lógica principal de processamento
-- `build.py`: Script de compilação
-- `LimpaMetadados.spec`: Configuração do PyInstaller
-
-## Changelog
-
-### v1.0.3 (2024-06-12) - Correções Críticas
-- Correção no manuseio de caminhos com caracteres especiais
-- Melhoria na detecção de diretórios de saída
-- Processamento mais robusto de nomes de arquivos
-- Correção de bugs relacionados a caminhos em diferentes sistemas
-
-### v1.0.2 (2024-06-11) - Melhorias de Segurança
-- Sistema de sanitização de nomes de arquivos
-- Validação MIME real com verificação de assinatura binária
-- Controle de recursos com timeouts configuráveis
-- Sistema de auditoria com hash SHA-256
-- Limite de 10GB por arquivo
-- Proteção contra injeção de comandos
-
-### v1.0.1 (2024-06-11) - Otimizações de Interface
-- Interface otimizada com altura de 800px
-- Janela não redimensionável para melhor UX
-- Melhor visualização de todos os elementos
-
-### v1.0.0 (2024-06-11) - Versão Inicial
-- Primeira versão estável
-- Remoção completa de metadados
-- Processamento em lote
-- Interface gráfica intuitiva
-- Suporte a múltiplos formatos
-
-## Licença
-
-Este software é distribuído gratuitamente para uso pessoal e comercial.
-
-## Suporte
-
-Para reportar problemas ou sugerir melhorias, utilize as [Issues](https://github.com/jbrunops/limpa-metadados/issues) do GitHub.
+> **Aplicação Desktop profissional para remoção completa e segura de metadados e rastros digitais em arquivos de vídeo, com interface moderna e processamento 100% offline.**
 
 ---
 
-**Desenvolvido com foco em privacidade e segurança digital.**
+## 👨‍💻 Sobre o Projeto
+
+O **Limpar Metadados PRO** foi concebido e desenvolvido por **Jackson Porciuncula** como resultado de estudos e aprofundamento prático em programação com **Python** na **Faculdade Pitágoras**. 
+
+O projeto une conceitos fundamentais da ciência da computação e engenharia de software aplicados a um problema real do dia a dia:
+- **Privacidade e Segurança Digital:** eliminação de vetores de vazamento de dados pessoais (coordenadas de geolocalização GPS, identificadores de câmera/dispositivo, data/hora exata de captura e dados de edição).
+- **Processamento Concorrente e Thread-Safety:** execução assíncrona desacoplada da thread principal de interface para garantir fluidez e responsividade da interface.
+- **Validação Defensiva (*Defense in Depth*):** sanitização de entradas, prevenção contra ataques de injeção de comandos em subprocessos, detecção de *path traversal* e validação estrita de assinaturas binárias de arquivo (*magic bytes*).
+
+---
+
+## ✨ Funcionalidades Principais
+
+* **Remoção Completa de Metadados:** Strip de todas as tags internas, capítulos, dispositivos e coordenadas geográficas via FFmpeg com parâmetro `+bitexact`.
+* **Preservação de Qualidade (Stream Copy):** Os fluxos de vídeo e áudio são copiados sem recodificação (`-c copy`), mantendo 100% da resolução original em fração de segundos.
+* **Interface Moderna e Elegante:** Construída com `CustomTkinter` e design baseado em cards arredondados e badges informativos em formato *pill*.
+* **Suporte a Arrastar e Soltar (Drag & Drop):** Integração nativa via `tkinterdnd2`, permitindo arrastar arquivos do Windows Explorer direto para a aplicação.
+* **Inspeção Prévia de Metadados:** Janela modal integrada para inspecionar exatamente quais tags estão embutidas no arquivo antes de iniciar o processo de limpeza.
+* **Processamento em Lote:** Limpeza de múltiplos arquivos em sequência com barra de progresso em tempo real e opção de cancelamento imediato.
+* **Temas Claro e Escuro:** Seletor intuitivo na barra lateral adaptando toda a paleta de cores harmoniosamente.
+* **100% Offline:** Sem conexões de rede, sem rastreadores, sem telemetria.
+
+---
+
+## 📁 Formatos de Vídeo Suportados
+
+| Formato | Extensão | Validação Binária (Magic Bytes) |
+|---|---|---|
+| **MP4** | `.mp4` | `ftypmp4`, `ftypisom`, `v1/v2` |
+| **MKV** | `.mkv` | EBML Header (`\x1a\x45\xdf\xa3`) |
+| **MOV** | `.mov` | QuickTime (`ftypqt`) |
+| **AVI** | `.avi` | RIFF Container |
+| **WebM** | `.webm` | EBML Header |
+| **WMV** | `.wmv` | ASF Specification |
+| **FLV** | `.flv` | Flash Video Signature |
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- **Python 3.11+** instalado
+- **FFmpeg:** O programa utiliza o `ffmpeg.exe` local ou detecta automaticamente qualquer instalação do FFmpeg presente no `PATH` do sistema.
+
+### 1. Clonar o Repositório
+```bash
+git clone https://github.com/jbpssdev/limpar-metadados-pro.git
+cd limpar-metadados-pro
+```
+
+### 2. Criar e Ativar Ambiente Virtual
+```bash
+python -m venv .venv
+
+# No Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+
+# No Windows (CMD):
+.\.venv\Scripts\activate.bat
+```
+
+### 3. Instalar as Dependências
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Executar a Aplicação
+```bash
+python main.py
+```
+
+---
+
+## 🖥️ Como Usar
+
+1. **Adicionar Vídeos:** Arraste e solte seus arquivos na janela principal ou clique em **"+ Adicionar Vídeos"** na barra lateral.
+2. **Inspecionar Metadados (Opcional):** Clique no ícone de lupa `🔍` ao lado de qualquer arquivo na fila para visualizar os metadados existentes.
+3. **Definir Pasta de Saída (Opcional):** Por padrão, os arquivos limpos são salvos na mesma pasta do arquivo original com o sufixo `_limpo`. Você pode escolher uma pasta de destino específica clicando em **"Alterar Pasta"**.
+4. **Processar:** Clique em **"INICIAR LIMPEZA"**.
+5. **Acessar os Arquivos:** Ao término do lote, utilize o botão **"📂 Abrir Pasta"** para visualizar seus vídeos higienizados.
+
+---
+
+## 🏗️ Arquitetura do Projeto
+
+```
+limpar-metadados-pro/
+├── docs/                     # Documentação de arquitetura e segurança
+│   ├── RELEASE_NOTES.md      # Histórico de lançamentos e versões
+│   ├── SEGURANCA.md          # Especificação técnica das defesas de segurança
+│   └── SETUP.md              # Guia para contribuidores
+├── tests/                    # Suíte de testes automatizados (unittest)
+│   └── test_validation.py    # Testes de sanitização, segurança e validação
+├── core.py                   # Motor de processamento seguro (FFmpeg + hashing)
+├── interface.py              # Interface gráfica moderna (CustomTkinter + Drag & Drop)
+├── ui_theme.py               # Design System centralizado (Tokens de cores e temas)
+├── modal_metadata.py         # Janela modal para inspeção de metadados
+├── main.py                   # Ponto de entrada da aplicação
+├── build.py                  # Script de automação de compilação
+├── LimparMetadadosPRO.spec    # Especificação do PyInstaller para build portátil
+├── requirements.txt          # Dependências do projeto
+└── README.md                 # Documentação principal
+```
+
+---
+
+## 🧪 Testes Automatizados
+
+Para rodar a suíte de testes unitários:
+
+```bash
+python -m unittest discover -s tests -p "test_*.py"
+```
+
+---
+
+## 📦 Gerando o Executável (.exe)
+
+O projeto inclui rotina completa para compilação em executável único e portátil para Windows utilizando o PyInstaller:
+
+```bash
+python build.py
+```
+
+O executável final será gerado dentro da pasta `dist/LimparMetadadosPRO.exe`.
+
+---
+
+## 🛡️ Segurança e Auditoria
+
+Para detalhes completos sobre a arquitetura de segurança, sanitização de inputs e mitigação de vulnerabilidades, consulte o documento [docs/SEGURANCA.md](docs/SEGURANCA.md).
+
+---
+
+## 👤 Autor
+
+**Jackson Porciuncula**
+* Projeto desenvolvido para fins práticos e acadêmicos — **Faculdade Pitágoras**.
+* Repositório: [github.com/jbpssdev/limpar-metadados-pro](https://github.com/jbpssdev/limpar-metadados-pro)
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Consulte o arquivo de licença para mais detalhes.
