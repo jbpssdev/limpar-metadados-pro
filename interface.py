@@ -31,6 +31,8 @@ from ui_theme import (
     RADIUS_CARD, RADIUS_BUTTON, RADIUS_PILL, RADIUS_PROGRESS
 )
 
+from version import VERSION, APP_NAME
+
 # Configurações iniciais do CustomTkinter
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
@@ -41,10 +43,11 @@ class LimpaMetadadosApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.TkdndVersion = TkinterDnD._require(self)
         
         # Configurações da Janela
-        self.title("Limpar Metadados PRO • Remoção Segura de Metadados")
+        self.title(f"{APP_NAME} • Remoção Segura de Metadados")
         self.geometry("1060x780")
         self.minsize(920, 640)
         self.configure(fg_color=BG_APP)
+        self._configurar_icone()
         
         # Variáveis de Estado
         self.arquivos_selecionados = []  # Lista de dicts {path, name, size, status, widget, ...}
@@ -680,6 +683,21 @@ class LimpaMetadadosApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def _mudar_tema(self, escolha):
         modo_map = {"Escuro": "dark", "Claro": "light", "Sistema": "system"}
         ctk.set_appearance_mode(modo_map.get(escolha, "dark"))
+
+    def _configurar_icone(self):
+        """Define o ícone oficial da aplicação na janela e barra de tarefas do Windows"""
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "icon.ico")
+        if getattr(sys, 'frozen', False):
+            meipass = getattr(sys, '_MEIPASS', None)
+            if meipass:
+                cand = os.path.join(meipass, "assets", "icon.ico")
+                if os.path.exists(cand):
+                    icon_path = cand
+        if os.path.exists(icon_path):
+            try:
+                self.iconbitmap(icon_path)
+            except Exception as e:
+                security_logger.warning(f"Não foi possível aplicar ícone da janela: {e}")
 
     def _verificar_ffmpeg_startup(self):
         sucesso, msg = verificar_ffmpeg()

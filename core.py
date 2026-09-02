@@ -23,11 +23,13 @@ logging.basicConfig(
 )
 security_logger = logging.getLogger('security')
 
-# Informações do programa
-__title__ = "Limpar Metadados PRO"
-__version__ = "1.0.4"
-__author__ = "Jackson Porciuncula"
-__description__ = "Ferramenta profissional para remoção segura de metadados de vídeos"
+from version import VERSION, APP_NAME, AUTHOR, APP_DESCRIPTION
+
+# Informações do programa centralizadas
+__title__ = APP_NAME
+__version__ = VERSION
+__author__ = AUTHOR
+__description__ = APP_DESCRIPTION
 
 # Configurações de segurança
 MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024  # 10GB
@@ -143,24 +145,48 @@ def calculate_file_hash(filepath):
     return sha256_hash.hexdigest()
 
 def get_ffmpeg_path():
-    """Obtém o caminho do FFmpeg de forma segura (local, empacotado ou PATH do sistema)"""
+    """
+    Obtém o caminho do FFmpeg de forma segura com resolução hierárquica:
+    1. Extraído em runtime pelo PyInstaller (sys._MEIPASS/ffmpeg.exe)
+    2. Pasta de instalação do executável (bin/ffmpeg.exe ou junto ao .exe)
+    3. Pasta local de desenvolvimento (raiz ou bin/)
+    4. Instalação global existente no PATH do Windows
+    """
+    # 1. Se executando congelado via PyInstaller
     if getattr(sys, 'frozen', False):
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
-        exe_path = os.path.join(base_path, 'ffmpeg.exe')
-        if os.path.exists(exe_path):
-            return exe_path
-            
-    # 1. Verifica pasta local da aplicação
-    local_path = os.path.join(os.path.dirname(__file__), 'ffmpeg.exe')
-    if os.path.exists(local_path):
-        return local_path
+        # A. Extraído temporariamente na pasta de runtime do PyInstaller
+        meipass = getattr(sys, '_MEIPASS', None)
+        if meipass:
+            cand = os.path.join(meipass, 'ffmpeg.exe')
+            if os.path.exists(cand):
+                return os.path.normpath(cand)
         
-    # 2. Verifica se o FFmpeg está instalado no PATH do sistema operacional
+        # B. Instalado na pasta da aplicação (ex.: Inno Setup ou distribuição com subpasta bin)
+        app_dir = os.path.dirname(os.path.abspath(sys.executable))
+        for cand in [
+            os.path.join(app_dir, 'bin', 'ffmpeg.exe'),
+            os.path.join(app_dir, 'ffmpeg.exe'),
+            os.path.join(app_dir, '_internal', 'ffmpeg.exe'),
+        ]:
+            if os.path.exists(cand):
+                return os.path.normpath(cand)
+            
+    # 2. Em modo de desenvolvimento (Python puro)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    for cand in [
+        os.path.join(script_dir, 'ffmpeg.exe'),
+        os.path.join(script_dir, 'bin', 'ffmpeg.exe'),
+    ]:
+        if os.path.exists(cand):
+            return os.path.normpath(cand)
+        
+    # 3. Verifica se o FFmpeg está instalado no PATH do sistema operacional
     system_ffmpeg = shutil.which('ffmpeg') or shutil.which('ffmpeg.exe')
     if system_ffmpeg:
-        return system_ffmpeg
+        return os.path.normpath(system_ffmpeg)
         
-    return local_path
+    # Fallback seguro para pasta local
+    return os.path.normpath(os.path.join(script_dir, 'ffmpeg.exe'))
 
 def verificar_ffmpeg():
     """Verifica se o FFmpeg está disponível e funcionando"""

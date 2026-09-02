@@ -47,7 +47,18 @@ O projeto une conceitos fundamentais da ciência da computação e engenharia de
 
 ---
 
-## 🚀 Como Executar
+## 📦 Download & Instalação (Para Usuários Finais)
+
+Para quem deseja apenas utilizar o aplicativo, **não é necessário ter Python nem usar terminal**:
+
+1. Acesse a página oficial de **[Releases](https://github.com/jbpssdev/limpar-metadados-pro/releases)**.
+2. Baixe o instalador oficial: **`LimparMetadadosPRO-Setup-1.0.4.exe`**.
+3. Execute o instalador (duplo clique), escolha se deseja criar atalho na Área de Trabalho e conclua.
+4. Abra o **Limpar Metadados PRO** pelo Menu Iniciar ou atalho na Área de Trabalho!
+
+---
+
+## 🚀 Execução em Modo de Desenvolvimento (Programadores)
 
 ### Pré-requisitos
 - **Python 3.11+** instalado

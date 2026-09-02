@@ -11,7 +11,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[('ffmpeg.exe', '.')],
-    datas=[(ctk_path, 'customtkinter'), (dnd_path, 'tkinterdnd2')],
+    datas=[(ctk_path, 'customtkinter'), (dnd_path, 'tkinterdnd2'), ('assets', 'assets')],
     hiddenimports=['PIL._tkinter_finder', 'tkinterdnd2'],
     hookspath=[],
     hooksconfig={},
@@ -44,4 +44,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='assets/icon.ico',
+    version='version_info.txt',
 )
